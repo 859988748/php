@@ -9,6 +9,7 @@ $rowToReadDict = array('R' => 'S', 'V' => 'W','Z' => 'AA');
 $rowRange = 42; //$objPHPExcel->getSheet(0)->getHighestRow();
 
 function phpReader($file_url){
+	global $rowToReadDict,$rowRange;
 	$objReader=PHPExcel_IOFactory::createReader('Excel5');//use excel2007 for 2007 format
 	$objPHPExcel=$objReader->load($file_url);//$file_url即Excel文件的路径
 	$sheet=$objPHPExcel->getSheet(0);//获取第一个工作表
