@@ -88,19 +88,7 @@ $successFileUrl = dirname(__FILE__)."/{$ExcelFile_Name}GeoCodingResult/successPa
 $failedFileUrl = dirname(__FILE__)."/{$ExcelFile_Name}GeoCodingResult/FailedPart.json";
 $mutiPartFileUrl = dirname(__FILE__)."/${ExcelFile_Name}GeoCodingResult/multiResultsPart.json";
 
-function writeToFile($newFileName,$newFileContent){
-	$folder = dirname($newFileName);
-	if (!file_exists($folder)) {
-		# code...
-		mkdir($folder,0777,true);
-	}
-	if(file_put_contents($newFileName,$newFileContent)!=false){
-    	echo "File created (".basename($newFileName).")";
-	}else{
-    	echo "Cannot create file (".basename($newFileName).")";
-	}
-
-}
+require_once 'writeFileToDisk.php';
 
 writeToFile($successFileUrl,$jsonToSuccessFile);
 writeToFile($failedFileUrl,$jsonToFailFile);

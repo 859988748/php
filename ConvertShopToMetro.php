@@ -42,19 +42,6 @@
 		$shopArray = json_decode($json_string, true);
 	}
 
-	function writeToFile($newFileName,$newFileContent){
-		$folder = dirname($newFileName);
-		if (!file_exists($folder)) {
-			# code...
-			mkdir($folder,0777,true);
-		}
-		if(file_put_contents($newFileName,$newFileContent)!=false){
-	    	echo "File created (".basename($newFileName).")";
-		}else{
-	    	echo "Cannot create file (".basename($newFileName).")";
-		}
-	}
-
 	getStations();
 	getShops($shopFileUrl);
 	foreach ($shopArray as $key => $shop) {
@@ -81,6 +68,7 @@
 		$map [] = $shop;
 	}
 
+	require_once 'writeFileToDisk.php';
 	$resultFileUrl = dirname(__FILE__)."/{$FileName}NearestStaion/successPart.json";
 	writeToFile($resultFileUrl,json_encode($map,JSON_UNESCAPED_UNICODE));
 ?>
