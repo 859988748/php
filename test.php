@@ -1,9 +1,12 @@
 <?php
 //请求GeoCoding接口，将地址名转换为经纬度。
+//需要填写文件名变量 $ExcelFile_Name.
+//需要修改excelReader读取行号和列号。
 require_once 'excelReader.php';
 require_once 'request.php';
 
-$file_url  = dirname(__FILE__)."/新宿top50 商店汇总.xls";
+$ExcelFile_Name = '食品TOP800后台表格(1).xls';
+$file_url  = dirname(__FILE__)."/".$ExcelFile_Name;
 $shopArray = phpReader($file_url);
 
 $method = "get";
@@ -13,7 +16,8 @@ $mutiPartArray = [];
 foreach ($shopArray as $key => $value) {
 	# code...
 	$requesturl = "https://maps.googleapis.com/maps/api/geocode/json?address=";
-	foreach ($value as $shopName => $shopAddress) {
+	$dictContent = $value ['content'];
+	foreach ($dictContent as $shopName => $shopAddress) {
 		# code...
 		$requesturl .= urlencode($shopAddress);
 	}
@@ -36,6 +40,7 @@ foreach ($shopArray as $key => $value) {
 			$dict ['lng'] = $lng;
 			$dict ['ourName'] = $shopName;
 			$dict ['ourAddress'] = $shopAddress;
+			$dict ['locaionInExcel'] = $value ['locaionInExcel'];
 			$nameNgeoCodeArrya[] = $dict;
 			unset($dict); 
 			}else{
@@ -56,6 +61,7 @@ foreach ($shopArray as $key => $value) {
 				$tempDict ['ourName'] = $shopName;
 				$tempDict ['ourAddress'] = $shopAddress;
 				$tempDict ['results'] = $mutiResultsForOnePlace;
+				$tempDict ['locaionInExcel'] = $value['locaionInExcel'];
 				$mutiPartArray [] = $tempDict;
 				unset($tempDict);
 			}
@@ -63,12 +69,13 @@ foreach ($shopArray as $key => $value) {
  			$failedDict ['status'] = $status;
  			$failedDict ['ourName'] = $shopName;
  			$failedDict ['ourAddress'] = $shopAddress;
+ 			$failedDict ['locaionInExcel'] = $value['locaionInExcel'];
  			$failedPartArray [] = $failedDict;
  			unset($failedDict);
 		}
 	}else{
 		// exit("fail exit");
-		echo "\nno response\n".$shopName;
+		echo "\nno response\n".$shopName."--loctionInExcel:".$value['locaionInExcel'];
 		echo "\n-------------------------------------\n";
 	}
 }
@@ -77,9 +84,9 @@ $jsonToSuccessFile = json_encode($nameNgeoCodeArrya,JSON_UNESCAPED_UNICODE);
 $jsonToFailFile = json_encode($failedPartArray,JSON_UNESCAPED_UNICODE);
 $jsonToMutiResultsFile = json_encode($mutiPartArray,JSON_UNESCAPED_UNICODE);
 
-$successFileUrl = dirname(__FILE__)."/GeoCodingResult/successPart.json";
-$failedFileUrl = dirname(__FILE__)."/GeoCodingResult/FailedPart.json";
-$mutiPartFileUrl = dirname(__FILE__)."/GeoCodingResult/multiResultsPart.json";
+$successFileUrl = dirname(__FILE__)."/{$ExcelFile_Name}GeoCodingResult/successPart.json";
+$failedFileUrl = dirname(__FILE__)."/{$ExcelFile_Name}GeoCodingResult/FailedPart.json";
+$mutiPartFileUrl = dirname(__FILE__)."/${ExcelFile_Name}GeoCodingResult/multiResultsPart.json";
 
 function writeToFile($newFileName,$newFileContent){
 	$folder = dirname($newFileName);
