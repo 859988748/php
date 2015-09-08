@@ -27,7 +27,7 @@
 			# code...
 			$stationArray [] = $result;
 		}
-
+		$db->close();
 	}
 
 	function distanceBetweenTwoPoints($P1lat, $P1lon, $P2lat, $P2lon){
